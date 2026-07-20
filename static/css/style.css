@@ -1,0 +1,398 @@
+/* ============================================================
+   Token system
+   Subject: buku tabungan (bank passbook) opened flat on a desk.
+   Left page = formal terms & conditions (definisi DFA).
+   Right page = the teller's working ledger (validator interaktif).
+   ============================================================ */
+:root {
+  --paper: #efe8d6;
+  --paper-dark: #e4dcc4;
+  --ink: #182a20;
+  --ink-soft: #445446;
+  --ledger-line: #cdc3a0;
+  --cover-green: #0f2e22;
+  --cover-green-mid: #16402f;
+  --brass: #a9812f;
+  --brass-light: #d1ab55;
+  --valid: #1f6b4a;
+  --valid-soft: #e4efe6;
+  --reject: #8c2b2b;
+  --reject-soft: #f5e6e2;
+  --trap-grey: #6b6252;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cover-green);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  padding: clamp(16px, 4vw, 48px);
+}
+
+/* ---------- Outer passbook cover ---------- */
+.ledger-cover {
+  max-width: 1180px;
+  margin: 0 auto;
+  background: linear-gradient(160deg, var(--cover-green) 0%, var(--cover-green-mid) 100%);
+  border: 1px solid rgba(209, 171, 85, 0.35);
+  border-radius: 6px;
+  padding: clamp(18px, 3vw, 34px);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55);
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  color: var(--brass-light);
+  padding: 4px 10px 22px;
+  border-bottom: 1px solid rgba(209, 171, 85, 0.28);
+  margin-bottom: 22px;
+}
+.masthead__crest { color: var(--brass-light); }
+.masthead__eyebrow {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(209, 171, 85, 0.85);
+}
+.masthead__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(19px, 2.4vw, 26px);
+  line-height: 1.28;
+  color: #f6f1e2;
+}
+.masthead__docnum {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(246, 241, 226, 0.7);
+  line-height: 1.6;
+}
+.masthead__docnum strong {
+  display: block;
+  font-size: 13px;
+  color: var(--brass-light);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- The open spread (two pages) ---------- */
+.spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: var(--paper);
+  border-radius: 3px;
+  box-shadow: 0 18px 40px -18px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+.spread::before {
+  /* the fold */
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 34px;
+  margin-left: -17px;
+  background: linear-gradient(90deg,
+    rgba(0,0,0,0.08), rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.08));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.page {
+  padding: 30px 32px 36px;
+  position: relative;
+  background-image:
+    repeating-linear-gradient(var(--paper) 0 27px, var(--ledger-line) 27px 28px);
+  background-position: 0 96px;
+}
+.page--left { background-color: var(--paper); }
+.page--right { background-color: var(--paper-dark); }
+
+.page__heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 21px;
+  margin: 0 0 6px;
+  color: var(--cover-green);
+}
+.page__lede {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  max-width: 46ch;
+  line-height: 1.55;
+}
+.page__subheading {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11.5px;
+  color: var(--brass);
+  margin: 26px 0 10px;
+  border-top: 1px dashed var(--ledger-line);
+  padding-top: 16px;
+}
+
+/* ---------- 5-tuple definition list ---------- */
+.tuple {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.tuple__row {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 13px;
+}
+.tuple__row dt {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--cover-green);
+}
+.tuple__row dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+/* ---------- Diagram ---------- */
+.diagram {
+  background: rgba(255,255,255,0.35);
+  border: 1px solid var(--ledger-line);
+  border-radius: 4px;
+  padding: 8px;
+}
+#dfa-svg { width: 100%; height: auto; display: block; }
+.dfa-node circle {
+  fill: var(--paper);
+  stroke: var(--cover-green);
+  stroke-width: 1.6;
+}
+.dfa-node.accept circle.outer { fill: none; stroke: var(--valid); }
+.dfa-node.trap circle { stroke: var(--trap-grey); stroke-dasharray: 3 2; }
+.dfa-node text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--ink);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.dfa-edge path { fill: none; stroke: var(--ink-soft); stroke-width: 1.1; marker-end: url(#arrow); }
+.dfa-edge text {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--brass);
+}
+.dfa-node.active circle { stroke: var(--brass); stroke-width: 2.4; }
+
+/* ---------- Rules list ---------- */
+.rules {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.rules code {
+  font-family: var(--font-mono);
+  background: rgba(0,0,0,0.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* ---------- Validator form ---------- */
+#validator-form { margin-bottom: 8px; }
+.field-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brass);
+  margin-bottom: 6px;
+}
+.field-row { display: flex; gap: 10px; }
+#nomor_rekening {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  padding: 11px 12px;
+  border: 1.4px solid var(--cover-green);
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--ink);
+}
+#nomor_rekening:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(169, 129, 47, 0.18);
+}
+.btn-validate {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--cover-green);
+  color: var(--brass-light);
+  border: none;
+  padding: 0 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+.btn-validate:hover { background: var(--cover-green-mid); }
+.btn-validate:active { transform: translateY(1px); }
+.field-hint {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Ledger strip: digit-by-digit trace ---------- */
+.ledger-strip {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 78px;
+  padding: 14px;
+  background: rgba(255,255,255,0.4);
+  border: 1px solid var(--ledger-line);
+  border-radius: 4px;
+}
+.ledger-strip__placeholder {
+  margin: auto;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.ledger-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 46px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: cellIn 0.28s ease forwards;
+}
+@keyframes cellIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.ledger-cell__digit {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 19px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.6px solid var(--cover-green);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.ledger-cell.is-trap .ledger-cell__digit {
+  border-color: var(--reject);
+  color: var(--reject);
+  border-style: dashed;
+  background: var(--reject-soft);
+}
+.ledger-cell.is-accept .ledger-cell__digit {
+  border-color: var(--valid);
+  background: var(--valid-soft);
+}
+.ledger-cell__state {
+  margin-top: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Stamp ---------- */
+.stamp-area {
+  display: flex;
+  justify-content: center;
+  min-height: 108px;
+  align-items: center;
+}
+.stamp {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 30px;
+  border: 3px solid currentColor;
+  border-radius: 8px;
+  transform: rotate(-6deg) scale(0.6);
+  opacity: 0;
+  animation: stampIn 0.35s cubic-bezier(.2,1.4,.4,1) 0.15s forwards;
+}
+.stamp.valid { color: var(--valid); }
+.stamp.reject { color: var(--reject); }
+@keyframes stampIn {
+  to { opacity: 0.92; transform: rotate(-6deg) scale(1); }
+}
+
+.result-detail {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  min-height: 18px;
+}
+
+/* ---------- Colophon ---------- */
+.colophon {
+  margin-top: 20px;
+  padding: 14px 10px 4px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: rgba(246, 241, 226, 0.55);
+}
+.colophon__dot { color: rgba(246, 241, 226, 0.3); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .spread { grid-template-columns: 1fr; }
+  .spread::before { display: none; }
+  .masthead { grid-template-columns: auto 1fr; }
+  .masthead__docnum { display: none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .ledger-cell, .stamp { animation: none; opacity: 1; transform: none; }
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validasi Nomor Rekening — Implementasi DFA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="ledger-cover">
+  <header class="masthead">
+    <div class="masthead__crest" aria-hidden="true">
+      <svg viewBox="0 0 60 60" width="42" height="42">
+        <circle cx="30" cy="30" r="27" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="30" cy="30" r="19" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M30 14 L38 26 L30 46 L22 26 Z" fill="currentColor" opacity="0.85"/>
+      </svg>
+    </div>
+    <div class="masthead__text">
+      <p class="masthead__eyebrow">Studi Kasus Otomata &middot; Teori Bahasa &amp; Otomata</p>
+      <h1 class="masthead__title">Implementasi Deterministic Finite Automata (DFA)<br>untuk Validasi Nomor Rekening Sederhana</h1>
+    </div>
+    <div class="masthead__docnum">
+      <span>No. Reg.</span>
+      <strong>DFA&thinsp;/&thinsp;10&thinsp;&ndash;&thinsp;DIGIT</strong>
+    </div>
+  </header>
+
+  <main class="spread">
+
+    <!-- ==================== LEFT PAGE: FORMAL DEFINITION ==================== -->
+    <section class="page page--left" aria-label="Definisi formal DFA">
+      <h2 class="page__heading">Ketentuan &amp; Definisi Formal</h2>
+      <p class="page__lede">
+        Otomata berikut memodelkan aturan penomoran rekening sederhana:
+        tepat sepuluh digit, diawali angka bukan nol.
+      </p>
+
+      <dl class="tuple">
+        <div class="tuple__row">
+          <dt>Q</dt>
+          <dd>{ q0, q1, q2, &hellip;, q9, q10, q<sub>trap</sub> } &mdash; 12 state</dd>
+        </div>
+        <div class="tuple__row">
+          <dt>&Sigma;</dt>
+          <dd>{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</dd>
+        </div>
+        <div class="tuple__row">
+          <dt>q0</dt>
+          <dd>state awal, sebelum ada digit dibaca</dd>
+        </div>
+        <div class="tuple__row">
+          <dt>F</dt>
+          <dd>{ q10 } &mdash; satu-satunya accepting state</dd>
+        </div>
+        <div class="tuple__row">
+          <dt>&delta;</dt>
+          <dd>lihat diagram transisi &amp; tabel di bawah</dd>
+        </div>
+      </dl>
+
+      <h3 class="page__subheading">Diagram Transisi State</h3>
+      <div class="diagram" id="diagram">
+        <svg id="dfa-svg" viewBox="-20 0 740 250" role="img" aria-labelledby="dfaTitle">
+          <title id="dfaTitle">Diagram transisi DFA validasi nomor rekening</title>
+          <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#445446"/></marker></defs>
+          <g class="dfa-edge"><path d="M-3.0,62 L23.0,62"/></g><text x="-7.0" y="54" text-anchor="end" style="font-family:var(--font-mono);font-size:9px;fill:var(--ink-soft);">start</text>
+          <g class="dfa-edge"><path d="M57.0,62 L87.0,62"/><text x="72.0" y="52" text-anchor="middle">1-9</text></g>
+          <g class="dfa-edge"><path d="M121.0,62 L151.0,62"/><text x="136.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M185.0,62 L215.0,62"/><text x="200.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M249.0,62 L279.0,62"/><text x="264.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M313.0,62 L343.0,62"/><text x="328.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M377.0,62 L407.0,62"/><text x="392.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M441.0,62 L471.0,62"/><text x="456.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M505.0,62 L535.0,62"/><text x="520.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M569.0,62 L599.0,62"/><text x="584.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M633.0,62 L663.0,62"/><text x="648.0" y="52" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M55.5,68.9 L341.7,196.8"/><text x="184.6" y="132.9" text-anchor="middle">0</text></g>
+          <g class="dfa-edge"><path d="M660.8,70.6 L378.3,196.8"/><text x="539.5" y="133.7" text-anchor="middle">0-9</text></g>
+          <g class="dfa-edge"><path d="M350,185 C 334,157 386,157 370,185"/><text x="360" y="163" text-anchor="middle">0-9 / bukan digit</text></g>
+          <g class="dfa-node" id="node-q0" data-state="q0"><circle cx="40.0" cy="62" r="17"/><text x="40.0" y="62">q0</text></g>
+          <g class="dfa-node" id="node-q1" data-state="q1"><circle cx="104.0" cy="62" r="17"/><text x="104.0" y="62">q1</text></g>
+          <g class="dfa-node" id="node-q2" data-state="q2"><circle cx="168.0" cy="62" r="17"/><text x="168.0" y="62">q2</text></g>
+          <g class="dfa-node" id="node-q3" data-state="q3"><circle cx="232.0" cy="62" r="17"/><text x="232.0" y="62">q3</text></g>
+          <g class="dfa-node" id="node-q4" data-state="q4"><circle cx="296.0" cy="62" r="17"/><text x="296.0" y="62">q4</text></g>
+          <g class="dfa-node" id="node-q5" data-state="q5"><circle cx="360.0" cy="62" r="17"/><text x="360.0" y="62">q5</text></g>
+          <g class="dfa-node" id="node-q6" data-state="q6"><circle cx="424.0" cy="62" r="17"/><text x="424.0" y="62">q6</text></g>
+          <g class="dfa-node" id="node-q7" data-state="q7"><circle cx="488.0" cy="62" r="17"/><text x="488.0" y="62">q7</text></g>
+          <g class="dfa-node" id="node-q8" data-state="q8"><circle cx="552.0" cy="62" r="17"/><text x="552.0" y="62">q8</text></g>
+          <g class="dfa-node" id="node-q9" data-state="q9"><circle cx="616.0" cy="62" r="17"/><text x="616.0" y="62">q9</text></g>
+          <g class="dfa-node accept" id="node-q10" data-state="q10"><circle class="outer" cx="680.0" cy="62" r="21"/><circle cx="680.0" cy="62" r="17"/><text x="680.0" y="62">q10</text></g>
+          <g class="dfa-node trap" id="node-qtrap" data-state="qtrap"><circle cx="360" cy="205" r="20"/><text x="360" y="205">trap</text></g>
+        </svg>
+      </div>
+
+      <h3 class="page__subheading">Aturan Validitas</h3>
+      <ol class="rules">
+        <li>Panjang input harus <strong>tepat 10 digit</strong>.</li>
+        <li>Digit pertama <strong>tidak boleh 0</strong> (kode bank/cabang).</li>
+        <li>Digit ke-2 hingga ke-10 bebas <code>0&ndash;9</code>.</li>
+        <li>Karakter selain digit (huruf, spasi, simbol) langsung menuju
+          state jebakan <code>q<sub>trap</sub></code>.</li>
+      </ol>
+    </section>
+
+    <!-- ==================== RIGHT PAGE: INTERACTIVE VALIDATOR ==================== -->
+    <section class="page page--right" aria-label="Validator interaktif">
+      <h2 class="page__heading">Buku Tabungan Digital</h2>
+      <p class="page__lede">Masukkan nomor rekening untuk dijalankan melalui mesin DFA, digit demi digit.</p>
+
+      <form id="validator-form" autocomplete="off">
+        <label for="nomor_rekening" class="field-label">Nomor Rekening</label>
+        <div class="field-row">
+          <input
+            type="text"
+            id="nomor_rekening"
+            name="nomor_rekening"
+            inputmode="numeric"
+            maxlength="16"
+            placeholder="cth. 1234567890"
+            aria-describedby="field-hint">
+          <button type="submit" class="btn-validate">Validasi</button>
+        </div>
+        <p id="field-hint" class="field-hint">Boleh diisi angka apa pun &mdash; mesin akan menunjukkan tepat di mana ia diterima atau ditolak.</p>
+      </form>
+
+      <div class="ledger-strip" id="ledger-strip" aria-live="polite">
+        <p class="ledger-strip__placeholder">Jejak transisi state akan muncul di sini setelah validasi dijalankan.</p>
+      </div>
+
+      <div class="stamp-area" id="stamp-area"></div>
+
+      <div class="result-detail" id="result-detail"></div>
+    </section>
+
+  </main>
+
+  <footer class="colophon">
+    <span>UAS Teori Bahasa &amp; Otomata &mdash; Proyek Individu Berbasis Jurnal Ilmiah</span>
+    <span class="colophon__dot">&middot;</span>
+    <span>Implementasi DFA murni (tabel transisi eksplisit), disajikan via Flask</span>
+  </footer>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
